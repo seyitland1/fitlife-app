@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 8 - Parallax Scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-layer {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            filter: blur(50px);
+            opacity: 0.3;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .slide-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: brightness(0.4);
+        }
+
+        .slide:nth-child(1) .slide-bg {
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .slide:nth-child(2) .slide-bg {
+            background-image: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .slide:nth-child(3) .slide-bg {
+            background-image: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .slide:nth-child(4) .slide-bg {
+            background-image: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .slide:nth-child(5) .slide-bg {
+            background-image: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .parallax-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .parallax-element:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            font-size: 100px;
+            animation-delay: 0s;
+        }
+
+        .parallax-element:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            font-size: 80px;
+            animation-delay: 1s;
+        }
+
+        .parallax-element:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            font-size: 120px;
+            animation-delay: 2s;
+        }
+
+        .parallax-element:nth-child(4) {
+            bottom: 10%;
+            right: 10%;
+            font-size: 90px;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+            66% {
+                transform: translateY(10px) rotate(-3deg);
+            }
+        }
+
+        .slide-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .slide-title {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+            animation: slideInUp 1s ease 0.5s both;
+        }
+
+        .slide-description {
+            font-size: 20px;
+            line-height: 1.6;
+            opacity: 0.9;
+            animation: slideInUp 1s ease 0.7s both;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.8);
+            transform: scale(1.1);
+        }
+
+        .slide-indicators {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: white;
+            transform: scale(1.3);
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 36px;
+            font-weight: 100;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 3px;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-layer"></div>
+    
+    <div class="title">
+        <h1>PARALLAX EXPERIENCE</h1>
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active">
+            <div class="slide-bg"></div>
+            <div class="parallax-element">🌟</div>
+            <div class="parallax-element">✨</div>
+            <div class="parallax-element">💫</div>
+            <div class="parallax-element">⭐</div>
+            <div class="slide-content">
+                <div class="slide-icon">🎨</div>
+                <div class="slide-title">Yaratıcı Tasarım</div>
+                <div class="slide-description">Modern ve etkileyici tasarımlarla markanızı öne çıkarın</div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-bg"></div>
+            <div class="parallax-element">🚀</div>
+            <div class="parallax-element">⚡</div>
+            <div class="parallax-element">🔥</div>
+            <div class="parallax-element">💎</div>
+            <div class="slide-content">
+                <div class="slide-icon">🚀</div>
+                <div class="slide-title">Hızlı Geliştirme</div>
+                <div class="slide-description">En son teknolojilerle hızlı ve güvenilir çözümler</div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-bg"></div>
+            <div class="parallax-element">🌊</div>
+            <div class="parallax-element">🌀</div>
+            <div class="parallax-element">💧</div>
+            <div class="parallax-element">🌈</div>
+            <div class="slide-content">
+                <div class="slide-icon">🌊</div>
+                <div class="slide-title">Akıcı Deneyim</div>
+                <div class="slide-description">Kullanıcı dostu arayüzlerle mükemmel deneyim</div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-bg"></div>
+            <div class="parallax-element">🌱</div>
+            <div class="parallax-element">🍃</div>
+            <div class="parallax-element">🌿</div>
+            <div class="parallax-element">🌳</div>
+            <div class="slide-content">
+                <div class="slide-icon">🌱</div>
+                <div class="slide-title">Sürdürülebilir Çözümler</div>
+                <div class="slide-description">Gelecek odaklı ve ölçeklenebilir teknolojiler</div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-bg"></div>
+            <div class="parallax-element">🎯</div>
+            <div class="parallax-element">🏆</div>
+            <div class="parallax-element">💪</div>
+            <div class="parallax-element">🎪</div>
+            <div class="slide-content">
+                <div class="slide-icon">🎯</div>
+                <div class="slide-title">Hedef Odaklı</div>
+                <div class="slide-description">İş hedeflerinize ulaşmanız için stratejik yaklaşım</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-indicators">
+        <div class="indicator active" onclick="goToSlide(0)"></div>
+        <div class="indicator" onclick="goToSlide(1)"></div>
+        <div class="indicator" onclick="goToSlide(2)"></div>
+        <div class="indicator" onclick="goToSlide(3)"></div>
+        <div class="indicator" onclick="goToSlide(4)"></div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <div class="scroll-hint">Kaydırın veya ok tuşlarını kullanın</div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index < currentSlide) {
+                    slide.classList.add('prev');
+                }
+            });
+
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        // Mouse wheel support
+        let isScrolling = false;
+        document.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            isScrolling = true;
+            
+            if (e.deltaY > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+            
+            setTimeout(() => {
+                isScrolling = false;
+            }, 1000);
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                prevSlide();
+            }
+        });
+
+        // Auto-play
+        setInterval(nextSlide, 6000);
+    </script>
+</body>
+</html>

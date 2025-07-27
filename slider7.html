@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 7 - 3D Card Flip</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            perspective: 1200px;
+        }
+
+        .slide {
+            width: 350px;
+            height: 500px;
+            position: absolute;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .slide-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .slide.flipped .slide-inner {
+            transform: rotateY(180deg);
+        }
+
+        .slide-front, .slide-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide-front {
+            background: linear-gradient(145deg, 
+                rgba(255,255,255,0.2), 
+                rgba(255,255,255,0.1));
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .slide-back {
+            background: linear-gradient(145deg, 
+                rgba(0,0,0,0.3), 
+                rgba(0,0,0,0.1));
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            transform: rotateY(180deg);
+        }
+
+        .slide.active {
+            transform: scale(1.1) translateZ(50px);
+            z-index: 10;
+        }
+
+        .slide.left {
+            transform: translateX(-450px) scale(0.8) rotateY(45deg);
+            opacity: 0.7;
+        }
+
+        .slide.right {
+            transform: translateX(450px) scale(0.8) rotateY(-45deg);
+            opacity: 0.7;
+        }
+
+        .slide.far-left {
+            transform: translateX(-700px) scale(0.6) rotateY(60deg);
+            opacity: 0.4;
+        }
+
+        .slide.far-right {
+            transform: translateX(700px) scale(0.6) rotateY(-60deg);
+            opacity: 0.4;
+        }
+
+        .slide-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .slide-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .slide-description {
+            font-size: 16px;
+            padding: 0 20px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .slide-back .slide-description {
+            font-size: 14px;
+            padding: 0 30px;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.8);
+            transform: scale(1.1);
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 36px;
+            font-weight: 300;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+
+        .flip-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <h1>3D Card Flip Slider</h1>
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active" onclick="flipCard(this)">
+            <div class="slide-inner">
+                <div class="slide-front">
+                    <div class="flip-indicator">Tıkla</div>
+                    <div class="slide-icon">🎨</div>
+                    <div class="slide-title">Tasarım</div>
+                    <div class="slide-description">Yaratıcı ve modern tasarım çözümleri</div>
+                </div>
+                <div class="slide-back">
+                    <div class="slide-icon">✨</div>
+                    <div class="slide-title">Detaylar</div>
+                    <div class="slide-description">Her projede mükemmellik arayışı, kullanıcı deneyimini ön planda tutan yaklaşım ve yenilikçi çözümler.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide left" onclick="flipCard(this)">
+            <div class="slide-inner">
+                <div class="slide-front">
+                    <div class="flip-indicator">Tıkla</div>
+                    <div class="slide-icon">💻</div>
+                    <div class="slide-title">Geliştirme</div>
+                    <div class="slide-description">Modern teknolojilerle güçlü uygulamalar</div>
+                </div>
+                <div class="slide-back">
+                    <div class="slide-icon">⚡</div>
+                    <div class="slide-title">Teknoloji</div>
+                    <div class="slide-description">React, Vue, Angular gibi modern framework'ler kullanarak hızlı ve güvenilir web uygulamaları geliştiriyoruz.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide right" onclick="flipCard(this)">
+            <div class="slide-inner">
+                <div class="slide-front">
+                    <div class="flip-indicator">Tıkla</div>
+                    <div class="slide-icon">🚀</div>
+                    <div class="slide-title">Performans</div>
+                    <div class="slide-description">Hızlı ve optimize edilmiş çözümler</div>
+                </div>
+                <div class="slide-back">
+                    <div class="slide-icon">📈</div>
+                    <div class="slide-title">Optimizasyon</div>
+                    <div class="slide-description">SEO uyumlu, hızlı yüklenen ve mobil uyumlu web siteleri ile işinizi büyütün.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide far-left" onclick="flipCard(this)">
+            <div class="slide-inner">
+                <div class="slide-front">
+                    <div class="flip-indicator">Tıkla</div>
+                    <div class="slide-icon">🎯</div>
+                    <div class="slide-title">Strateji</div>
+                    <div class="slide-description">Hedef odaklı dijital stratejiler</div>
+                </div>
+                <div class="slide-back">
+                    <div class="slide-icon">🎪</div>
+                    <div class="slide-title">Planlama</div>
+                    <div class="slide-description">Detaylı analiz ve planlama ile projenizin başarısını garanti altına alıyoruz.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide far-right" onclick="flipCard(this)">
+            <div class="slide-inner">
+                <div class="slide-front">
+                    <div class="flip-indicator">Tıkla</div>
+                    <div class="slide-icon">🌟</div>
+                    <div class="slide-title">Kalite</div>
+                    <div class="slide-description">Yüksek kaliteli ve sürdürülebilir çözümler</div>
+                </div>
+                <div class="slide-back">
+                    <div class="slide-icon">🏆</div>
+                    <div class="slide-title">Mükemmellik</div>
+                    <div class="slide-description">Test edilmiş, güvenilir ve uzun vadeli çözümler sunarak müşteri memnuniyetini sağlıyorız.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
+                
+                const position = (index - currentSlide + totalSlides) % totalSlides;
+                
+                if (position === 0) {
+                    slide.classList.add('active');
+                } else if (position === 1) {
+                    slide.classList.add('right');
+                } else if (position === 2) {
+                    slide.classList.add('far-right');
+                } else if (position === totalSlides - 1) {
+                    slide.classList.add('left');
+                } else if (position === totalSlides - 2) {
+                    slide.classList.add('far-left');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // Auto-play
+        setInterval(nextSlide, 5000);
+
+        // Initialize
+        updateSlides();
+    </script>
+</body>
+</html>

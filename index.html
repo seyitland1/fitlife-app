@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <!-- Sayfa meta bilgileri -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider Koleksiyonu</title>
+    <style>
+        /* Tüm elementler için temel sıfırlama */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Ana sayfa gövde stilleri */
+        body {
+            font-family: 'Arial', sans-serif;
+            /* Mavi-mor gradient arka plan */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; /* Minimum tam ekran yüksekliği */
+            padding: 20px; /* İç boşluk */
+        }
+
+        /* Ana içerik konteyneri */
+        .container {
+            max-width: 1200px; /* Maksimum genişlik sınırı */
+            margin: 0 auto; /* Ortalama */
+        }
+
+        /* Sayfa başlık bölümü */
+        .header {
+            text-align: center; /* Metni ortala */
+            margin-bottom: 40px; /* Alt boşluk */
+            color: white; /* Beyaz metin rengi */
+        }
+
+        /* Ana başlık stilleri */
+        .header h1 {
+            font-size: 3rem; /* Büyük font boyutu */
+            margin-bottom: 10px; /* Alt boşluk */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Gölge efekti */
+        }
+
+        /* Alt başlık stilleri */
+        .header p {
+            font-size: 1.2rem; /* Orta font boyutu */
+            opacity: 0.9; /* Hafif şeffaflık */
+        }
+
+        /* Responsive grid sistemi */
+        .grid {
+            display: grid; /* CSS Grid kullan */
+            /* Otomatik sütun yerleşimi, minimum 300px genişlik */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; /* Kartlar arası boşluk */
+            margin-bottom: 40px; /* Alt boşluk */
+        }
+
+        /* Slider kartları temel stilleri */
+        .card {
+            background: rgba(255, 255, 255, 0.1); /* Şeffaf beyaz arka plan */
+            backdrop-filter: blur(10px); /* Bulanıklık efekti (glassmorphism) */
+            border-radius: 15px; /* Yuvarlatılmış köşeler */
+            padding: 25px; /* İç boşluk */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* İnce şeffaf kenarlık */
+            transition: all 0.3s ease; /* Yumuşak geçiş animasyonu */
+            cursor: pointer; /* Tıklanabilir işaretçi */
+            text-decoration: none; /* Link alt çizgisini kaldır */
+            color: white; /* Beyaz metin */
+        }
+
+        /* Kart hover (üzerine gelme) efektleri */
+        .card:hover {
+            transform: translateY(-5px); /* Yukarı hareket */
+            background: rgba(255, 255, 255, 0.2); /* Daha opak arka plan */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Gölge efekti */
+        }
+
+        /* Kart başlık bölümü (ikon + başlık) */
+        .card-header {
+            display: flex; /* Yatay hizalama */
+            align-items: center; /* Dikey ortalama */
+            margin-bottom: 15px; /* Alt boşluk */
+        }
+
+        /* Kart ikonu stilleri */
+        .card-icon {
+            font-size: 2rem; /* Büyük ikon boyutu */
+            margin-right: 15px; /* Sağ boşluk */
+            width: 50px; /* Sabit genişlik */
+            height: 50px; /* Sabit yükseklik */
+            display: flex; /* Flexbox kullan */
+            align-items: center; /* Dikey ortalama */
+            justify-content: center; /* Yatay ortalama */
+            background: rgba(255, 255, 255, 0.1); /* Şeffaf arka plan */
+            border-radius: 10px; /* Yuvarlatılmış köşeler */
+        }
+
+        /* Kart ana başlığı */
+        .card-title {
+            font-size: 1.3rem; /* Orta-büyük font */
+            font-weight: bold; /* Kalın yazı */
+            margin-bottom: 5px; /* Alt boşluk */
+        }
+
+        /* Kart alt başlığı */
+        .card-subtitle {
+            font-size: 0.9rem; /* Küçük font */
+            opacity: 0.8; /* Hafif şeffaflık */
+        }
+
+        /* Kart açıklama metni */
+        .card-description {
+            font-size: 0.95rem; /* Orta font boyutu */
+            line-height: 1.5; /* Satır aralığı */
+            opacity: 0.9; /* Hafif şeffaflık */
+        }
+
+        /* Ana slider özel stilleri */
+        .main-slider {
+            grid-column: 1 / -1; /* Tüm sütunları kapla */
+            /* Kırmızı-turkuaz gradient arka plan */
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+
+        /* Mobil cihazlar için responsive tasarım */
+        @media (max-width: 768px) {
+            /* Mobilde tek sütun düzeni */
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Mobilde daha küçük başlık */
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ana container - tüm içeriği sarar -->
+    <div class="container">
+        <!-- Sayfa başlığı ve açıklama bölümü -->
+        <div class="header">
+            <h1>🎨 Slider Koleksiyonu</h1>
+            <p>Farklı tasarım ve efektlerle oluşturulmuş 21 benzersiz slider</p>
+        </div>
+
+        <!-- Slider kartları grid sistemi -->
+        <div class="grid">
+            <!-- Ana Slider Kartı - öne çıkan tasarım -->
+            <a href="slider.html" class="card main-slider">
+                <!-- Kart başlık bölümü (ikon + başlık) -->
+                <div class="card-header">
+                    <div class="card-icon">🌟</div>
+                    <div>
+                        <div class="card-title">Ana Slider</div>
+                        <div class="card-subtitle">3D Dönen Küp Tasarımı</div>
+                    </div>
+                </div>
+                <!-- Kart açıklama metni -->
+                <div class="card-description">
+                    Modern 3D efektler ve dönen küp animasyonları ile gelişmiş ana slider tasarımı.
+                </div>
+            </a>
+
+            <!-- Neon Glow Slider Kartı -->
+            <a href="slider1.html" class="card">
+                <!-- Kart başlık bölümü -->
+                <div class="card-header">
+                    <div class="card-icon">💫</div>
+                    <div>
+                        <div class="card-title">Neon Glow</div>
+                        <div class="card-subtitle">Işıltılı Efektler</div>
+                    </div>
+                </div>
+                <!-- Açıklama metni -->
+                <div class="card-description">
+                    Neon ışık efektleri ve parlak animasyonlarla modern bir görünüm sunan slider.
+                </div>
+            </a>
+
+            <!-- Glassmorphism Slider Kartı -->
+            <a href="slider2.html" class="card">
+                <!-- Kart başlık bölümü -->
+                <div class="card-header">
+                    <div class="card-icon">🔮</div>
+                    <div>
+                        <div class="card-title">Glassmorphism</div>
+                        <div class="card-subtitle">Cam Efekti</div>
+                    </div>
+                </div>
+                <!-- Açıklama metni -->
+                <div class="card-description">
+                    Şeffaf cam efektleri ve bulanık arka plan ile modern glassmorphism tasarımı.
+                </div>
+            </a>
+
+            <!-- Cyberpunk Slider Kartı -->
+            <a href="slider3.html" class="card">
+                <!-- Kart başlık bölümü -->
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <div>
+                        <div class="card-title">Cyberpunk</div>
+                        <div class="card-subtitle">Gelecek Teması</div>
+                    </div>
+                </div>
+                <!-- Açıklama metni -->
+                <div class="card-description">
+                    Cyberpunk tarzı renkler ve gelecekçi tasarım elementleri ile oluşturulmuş slider.
+                </div>
+            </a>
+
+            <!-- Minimalist Slider Kartı -->
+            <a href="slider4.html" class="card">
+                <!-- Kart başlık bölümü -->
+                <div class="card-header">
+                    <div class="card-icon">⚪</div>
+                    <div>
+                        <div class="card-title">Minimalist</div>
+                        <div class="card-subtitle">Sade Tasarım</div>
+                    </div>
+                </div>
+                <!-- Açıklama metni -->
+                <div class="card-description">
+                    Temiz çizgiler ve minimal tasarım anlayışı ile oluşturulmuş modern slider.
+                </div>
+            </a>
+
+            <a href="slider5.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">📻</div>
+                    <div>
+                        <div class="card-title">Vintage</div>
+                        <div class="card-subtitle">Retro Stil</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Nostaljik renkler ve vintage tasarım elementleri ile retro tarzda slider.
+                </div>
+            </a>
+
+            <a href="slider6.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🌈</div>
+                    <div>
+                        <div class="card-title">Hologram</div>
+                        <div class="card-subtitle">Gelecek Efektleri</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Holografik efektler ve gelecekçi animasyonlar ile oluşturulmuş slider.
+                </div>
+            </a>
+
+            <a href="slider7.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎴</div>
+                    <div>
+                        <div class="card-title">3D Card Flip</div>
+                        <div class="card-subtitle">Kart Çevirme</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    3D kart çevirme animasyonları ile interaktif ve dinamik slider tasarımı.
+                </div>
+            </a>
+
+            <a href="slider8.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🌊</div>
+                    <div>
+                        <div class="card-title">Parallax</div>
+                        <div class="card-subtitle">Derinlik Efekti</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Parallax scroll efektleri ile derinlik hissi veren modern slider tasarımı.
+                </div>
+            </a>
+
+            <a href="slider9.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔄</div>
+                    <div>
+                        <div class="card-title">Morphing</div>
+                        <div class="card-subtitle">Şekil Değiştirme</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Dinamik şekil değiştirme animasyonları ile akıcı geçişler sunan slider.
+                </div>
+            </a>
+
+            <a href="slider10.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">💧</div>
+                    <div>
+                        <div class="card-title">Liquid Flow</div>
+                        <div class="card-subtitle">Akışkan Efekt</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Sıvı akış efektleri ve organik animasyonlar ile doğal görünümlü slider.
+                </div>
+            </a>
+
+            <a href="slider11.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔢</div>
+                    <div>
+                        <div class="card-title">Matrix</div>
+                        <div class="card-subtitle">Dijital Tema</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Matrix tarzı dijital efektler ve binary kodlar ile oluşturulmuş slider.
+                </div>
+            </a>
+
+            <a href="slider12.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚛️</div>
+                    <div>
+                        <div class="card-title">Particle</div>
+                        <div class="card-subtitle">Parçacık Efektleri</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Parçacık animasyonları ve kozmik efektler ile evren temalı slider.
+                </div>
+            </a>
+
+            <a href="slider13.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">💎</div>
+                    <div>
+                        <div class="card-title">Kaleidoscope</div>
+                        <div class="card-subtitle">Kristal Efektleri</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Kaleidoskop efektleri ve kristal görüntüler ile renkli slider tasarımı.
+                </div>
+            </a>
+
+            <a href="slider14.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🕊️</div>
+                    <div>
+                        <div class="card-title">Origami</div>
+                        <div class="card-subtitle">Kağıt Sanatı</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Origami katlama efektleri ve kağıt sanatı temalı zarif slider tasarımı.
+                </div>
+            </a>
+
+            <a href="slider15.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚛️</div>
+                    <div>
+                        <div class="card-title">Quantum</div>
+                        <div class="card-subtitle">Enerji Alanları</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Kuantum enerji alanları ve bilimsel efektler ile oluşturulmuş slider.
+                </div>
+            </a>
+
+            <a href="slider16.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🧠</div>
+                    <div>
+                        <div class="card-title">Neural Network</div>
+                        <div class="card-subtitle">Sinir Ağları</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Yapay sinir ağları ve bağlantı noktaları ile teknolojik slider.
+                </div>
+            </a>
+
+            <a href="slider17.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🌟</div>
+                    <div>
+                        <div class="card-title">Holographic</div>
+                        <div class="card-subtitle">Projeksiyon Efektleri</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Holografik projeksiyon efektleri ile gelecekçi görünümlü slider.
+                </div>
+            </a>
+
+            <a href="slider18.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🌌</div>
+                    <div>
+                        <div class="card-title">Cosmic Nebula</div>
+                        <div class="card-subtitle">Uzay Teması</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Kozmik nebula efektleri ve yıldız alanları ile uzay temalı slider.
+                </div>
+            </a>
+
+            <a href="slider19.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">💻</div>
+                    <div>
+                        <div class="card-title">Digital Matrix</div>
+                        <div class="card-subtitle">Dijital Ağ</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Dijital matrix efektleri ve veri akışları ile teknolojik slider.
+                </div>
+            </a>
+
+            <a href="slider20.html" class="card">
+                <div class="card-header">
+                    <div class="card-icon">🌊</div>
+                    <div>
+                        <div class="card-title">Holographic Waves</div>
+                        <div class="card-subtitle">Dalga Efektleri</div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Holografik dalga efektleri ve enerji alanları ile dinamik slider.
+                </div>
+            </a>
+        </div> <!-- grid sonu -->
+    </div> <!-- container sonu -->
+</body>
+</html>

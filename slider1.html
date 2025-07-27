@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 1 - Neon Glow Effect</title>
+    <style>
+        /* Tüm elementler için temel sıfırlama */
+        * {
+            margin: 0; /* Dış boşlukları sıfırla */
+            padding: 0; /* İç boşlukları sıfırla */
+            box-sizing: border-box; /* Kenarlık ve padding'i genişliğe dahil et */
+        }
+
+        /* Sayfa gövdesi temel stilleri */
+        body {
+            font-family: 'Arial', sans-serif; /* Font ailesi */
+            background: #0a0a0a; /* Koyu siyah arka plan */
+            overflow: hidden; /* Taşan içeriği gizle */
+            color: white; /* Beyaz metin rengi */
+        }
+
+        /* Ana slider container */
+        .slider-container {
+            width: 100%; /* Tam genişlik */
+            height: 100vh; /* Tam ekran yüksekliği */
+            display: flex; /* Flexbox kullan */
+            align-items: center; /* Dikey ortalama */
+            justify-content: center; /* Yatay ortalama */
+            position: relative; /* Göreceli konumlandırma */
+        }
+
+        /* Slide kartları temel stilleri */
+        .slide {
+            width: 300px; /* Kart genişliği */
+            height: 400px; /* Kart yüksekliği */
+            /* Pembe-mor gradient arka plan */
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            border-radius: 20px; /* Yuvarlatılmış köşeler */
+            position: absolute; /* Mutlak konumlandırma */
+            display: flex; /* Flexbox kullan */
+            flex-direction: column; /* Dikey sıralama */
+            align-items: center; /* Yatay ortalama */
+            justify-content: center; /* Dikey ortalama */
+            /* Yumuşak geçiş animasyonu */
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            /* Neon glow efekti */
+            box-shadow: 0 0 50px rgba(255, 0, 110, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1); /* İnce şeffaf kenarlık */
+        }
+
+        /* Aktif slide stilleri */
+        .slide.active {
+            transform: scale(1.1); /* Büyütme efekti */
+            z-index: 10; /* En üstte göster */
+            /* Güçlü neon glow efekti */
+            box-shadow: 0 0 80px rgba(255, 0, 110, 0.8), 0 0 120px rgba(131, 56, 236, 0.6);
+        }
+
+        /* Sol taraftaki slide */
+        .slide.left {
+            transform: translateX(-350px) scale(0.8); /* Sola kaydır ve küçült */
+            opacity: 0.6; /* Şeffaflık */
+        }
+
+        /* Sağ taraftaki slide */
+        .slide.right {
+            transform: translateX(350px) scale(0.8); /* Sağa kaydır ve küçült */
+            opacity: 0.6; /* Şeffaflık */
+        }
+
+        /* Slide içerik alanı */
+        .slide-content {
+            text-align: center; /* Metni ortala */
+            padding: 20px; /* İç boşluk */
+        }
+
+        /* Slide başlık stilleri */
+        .slide-title {
+            font-size: 28px; /* Büyük font boyutu */
+            font-weight: bold; /* Kalın yazı */
+            margin-bottom: 15px; /* Alt boşluk */
+            /* Beyaz glow efekti */
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Slide ikon stilleri */
+        .slide-icon {
+            font-size: 80px; /* Çok büyük ikon */
+            margin-bottom: 20px; /* Alt boşluk */
+            /* Beyaz glow efekti */
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+        }
+
+        /* Kontrol butonları container */
+        .controls {
+            position: absolute; /* Mutlak konumlandırma */
+            bottom: 50px; /* Alttan 50px */
+            left: 50%; /* Soldan %50 */
+            transform: translateX(-50%); /* Tam ortala */
+            display: flex; /* Flexbox kullan */
+            gap: 20px; /* Butonlar arası boşluk */
+        }
+
+        /* Kontrol butonları stilleri */
+        .control-btn {
+            width: 60px; /* Buton genişliği */
+            height: 60px; /* Buton yüksekliği */
+            border: none; /* Kenarlık yok */
+            border-radius: 50%; /* Yuvarlak buton */
+            /* Gradient arka plan */
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            color: white; /* Beyaz metin */
+            font-size: 24px; /* Büyük font */
+            cursor: pointer; /* Tıklanabilir işaretçi */
+            transition: all 0.3s ease; /* Yumuşak geçiş */
+            /* Neon glow efekti */
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.5);
+        }
+
+        /* Buton hover efektleri */
+        .control-btn:hover {
+            transform: scale(1.2); /* Büyütme efekti */
+            /* Güçlü glow efekti */
+            box-shadow: 0 0 50px rgba(255, 0, 110, 0.8);
+        }
+
+        /* Sayfa başlığı container */
+        .title {
+            position: absolute; /* Mutlak konumlandırma */
+            top: 50px; /* Üstten 50px */
+            left: 50%; /* Soldan %50 */
+            transform: translateX(-50%); /* Tam ortala */
+            text-align: center; /* Metni ortala */
+            z-index: 100; /* En üstte göster */
+        }
+
+        /* Ana başlık stilleri */
+        .title h1 {
+            font-size: 48px; /* Çok büyük font */
+            /* Gradient metin rengi */
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            -webkit-background-clip: text; /* Metne gradient uygula */
+            -webkit-text-fill-color: transparent; /* Metin rengini şeffaf yap */
+            /* Neon glow efekti */
+            text-shadow: 0 0 30px rgba(255, 0, 110, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sayfa başlığı -->
+    <div class="title">
+        <h1>Neon Glow Slider</h1>
+    </div>
+
+    <!-- Ana slider container -->
+    <div class="slider-container">
+        <!-- Aktif slide (ortada) -->
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="slide-icon">🌟</div>
+                <div class="slide-title">Neon Magic</div>
+            </div>
+        </div>
+        <!-- Sol taraftaki slide -->
+        <div class="slide left">
+            <div class="slide-content">
+                <div class="slide-icon">⚡</div>
+                <div class="slide-title">Electric Power</div>
+            </div>
+        </div>
+        <!-- Sağ taraftaki slide -->
+        <div class="slide right">
+            <div class="slide-content">
+                <div class="slide-icon">🔥</div>
+                <div class="slide-title">Fire Energy</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kontrol butonları -->
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <script>
+        // Mevcut aktif slide'ın indeksi
+        let currentSlide = 0;
+        // Tüm slide elementlerini seç
+        const slides = document.querySelectorAll('.slide');
+        // Toplam slide sayısı
+        const totalSlides = slides.length;
+
+        // Slide pozisyonlarını güncelleme fonksiyonu
+        function updateSlides() {
+            // Her slide için döngü
+            slides.forEach((slide, index) => {
+                // Önceki sınıfları temizle
+                slide.classList.remove('active', 'left', 'right');
+                
+                // Mevcut slide ise aktif yap
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                // Önceki slide ise sol tarafa yerleştir
+                } else if (index === (currentSlide - 1 + totalSlides) % totalSlides) {
+                    slide.classList.add('left');
+                // Sonraki slide ise sağ tarafa yerleştir
+                } else if (index === (currentSlide + 1) % totalSlides) {
+                    slide.classList.add('right');
+                }
+            });
+        }
+
+        // Sonraki slide'a geçme fonksiyonu
+        function nextSlide() {
+            // Döngüsel olarak bir sonraki slide'a geç
+            currentSlide = (currentSlide + 1) % totalSlides;
+            // Slide pozisyonlarını güncelle
+            updateSlides();
+        }
+
+        // Önceki slide'a geçme fonksiyonu
+        function prevSlide() {
+            // Döngüsel olarak bir önceki slide'a geç
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            // Slide pozisyonlarını güncelle
+            updateSlides();
+        }
+
+        // Otomatik oynatma - 3 saniyede bir sonraki slide'a geç
+        setInterval(nextSlide, 3000);
+    </script>
+</body>
+</html>

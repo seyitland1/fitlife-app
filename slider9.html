@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 9 - Morphing Shapes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: radial-gradient(ellipse at center, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .morphing-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .morph-shape {
+            position: absolute;
+            background: linear-gradient(45deg, #e74c3c, #f39c12, #e67e22, #d35400);
+            border-radius: 50%;
+            animation: morph 8s ease-in-out infinite;
+            opacity: 0.1;
+        }
+
+        .morph-shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .morph-shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .morph-shape:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes morph {
+            0%, 100% {
+                border-radius: 50%;
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+                transform: rotate(90deg) scale(1.2);
+            }
+            50% {
+                border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+                transform: rotate(180deg) scale(0.8);
+            }
+            75% {
+                border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
+                transform: rotate(270deg) scale(1.1);
+            }
+        }
+
+        .slide {
+            position: absolute;
+            width: 400px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10;
+        }
+
+        .slide-shape {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            transition: all 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-shape::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .slide.active .slide-shape {
+            border-radius: 20px;
+            transform: scale(1.1) rotateY(0deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.left .slide-shape {
+            border-radius: 50% 20% 50% 20%;
+            transform: translateX(-300px) scale(0.8) rotateY(45deg);
+        }
+
+        .slide.right .slide-shape {
+            border-radius: 20% 50% 20% 50%;
+            transform: translateX(300px) scale(0.8) rotateY(-45deg);
+        }
+
+        .slide.far-left .slide-shape {
+            border-radius: 70% 30% 70% 30%;
+            transform: translateX(-500px) scale(0.6) rotateY(60deg);
+        }
+
+        .slide.far-right .slide-shape {
+            border-radius: 30% 70% 30% 70%;
+            transform: translateX(500px) scale(0.6) rotateY(-60deg);
+        }
+
+        .slide.active {
+            z-index: 20;
+        }
+
+        .slide.left, .slide.right {
+            opacity: 0.7;
+        }
+
+        .slide.far-left, .slide.far-right {
+            opacity: 0.4;
+        }
+
+        .slide-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: iconFloat 3s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        .slide-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .slide-title {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+
+        .slide-description {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.5;
+            max-width: 300px;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .control-btn:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .control-btn:hover {
+            border-color: rgba(255,255,255,0.8);
+            transform: scale(1.1);
+        }
+
+        .control-btn:nth-child(1) {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+
+        .control-btn:nth-child(2) {
+            border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 36px;
+            font-weight: 100;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 3px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            }
+            to {
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3);
+            }
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12);
+            border-radius: 2px;
+            width: 0;
+            animation: progress 5s linear infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="morphing-bg">
+        <div class="morph-shape"></div>
+        <div class="morph-shape"></div>
+        <div class="morph-shape"></div>
+    </div>
+
+    <div class="title">
+        <h1>MORPHING UNIVERSE</h1>
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active">
+            <div class="slide-shape">
+                <div class="slide-icon">🎭</div>
+            </div>
+            <div class="slide-content">
+                <div class="slide-title">Dönüşüm</div>
+                <div class="slide-description">Sürekli değişen ve gelişen yaratıcı süreçler</div>
+            </div>
+        </div>
+
+        <div class="slide left">
+            <div class="slide-shape">
+                <div class="slide-icon">🌀</div>
+            </div>
+            <div class="slide-content">
+                <div class="slide-title">Evrim</div>
+                <div class="slide-description">Teknoloji ile birlikte sürekli evrim geçiren çözümler</div>
+            </div>
+        </div>
+
+        <div class="slide right">
+            <div class="slide-shape">
+                <div class="slide-icon">💫</div>
+            </div>
+            <div class="slide-content">
+                <div class="slide-title">Yenilik</div>
+                <div class="slide-description">Sınırları zorlayan yenilikçi yaklaşımlar</div>
+            </div>
+        </div>
+
+        <div class="slide far-left">
+            <div class="slide-shape">
+                <div class="slide-icon">🔮</div>
+            </div>
+            <div class="slide-content">
+                <div class="slide-title">Vizyon</div>
+                <div class="slide-description">Geleceği şekillendiren vizyoner projeler</div>
+            </div>
+        </div>
+
+        <div class="slide far-right">
+            <div class="slide-shape">
+                <div class="slide-icon">⚡</div>
+            </div>
+            <div class="slide-content">
+                <div class="slide-title">Enerji</div>
+                <div class="slide-description">Dinamik ve güçlü performans odaklı çözümler</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill"></div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
+                
+                const position = (index - currentSlide + totalSlides) % totalSlides;
+                
+                if (position === 0) {
+                    slide.classList.add('active');
+                } else if (position === 1) {
+                    slide.classList.add('right');
+                } else if (position === 2) {
+                    slide.classList.add('far-right');
+                } else if (position === totalSlides - 1) {
+                    slide.classList.add('left');
+                } else if (position === totalSlides - 2) {
+                    slide.classList.add('far-left');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        // Touch support
+        let startX = 0;
+        let endX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const threshold = 50;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // Auto-play
+        setInterval(nextSlide, 5000);
+
+        // Initialize
+        updateSlides();
+    </script>
+</body>
+</html>

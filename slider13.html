@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 13 - Kaleidoscope Dreams</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            overflow: hidden;
+            color: #fff;
+            height: 100vh;
+        }
+
+        .simple-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1;
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            perspective: 1200px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 320px;
+            height: 420px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.15), 
+                rgba(255, 255, 255, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(255, 255, 255, 0.1) 90deg,
+                transparent 180deg,
+                rgba(255, 255, 255, 0.1) 270deg,
+                transparent 360deg
+            );
+            animation: slideKaleidoscope 8s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes slideKaleidoscope {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .slide.active {
+            transform: scale(1.2) rotateX(10deg) rotateY(0deg);
+            z-index: 20;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .slide.active::before {
+            animation-duration: 4s;
+        }
+
+        .slide.left {
+            transform: translateX(-380px) scale(0.8) rotateY(35deg) rotateX(5deg);
+            opacity: 0.7;
+        }
+
+        .slide.right {
+            transform: translateX(380px) scale(0.8) rotateY(-35deg) rotateX(5deg);
+            opacity: 0.7;
+        }
+
+        .slide.far-left {
+            transform: translateX(-600px) scale(0.6) rotateY(50deg) rotateX(10deg);
+            opacity: 0.4;
+        }
+
+        .slide.far-right {
+            transform: translateX(600px) scale(0.6) rotateY(-50deg) rotateX(10deg);
+            opacity: 0.4;
+        }
+
+        .slide-content {
+            text-align: center;
+            padding: 30px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .slide-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: iconKaleidoscope 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            text-shadow: 0 0 30px currentColor;
+        }
+
+        @keyframes iconKaleidoscope {
+            0%, 100% {
+                transform: rotate(0deg) scale(1);
+                filter: hue-rotate(0deg) drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            }
+            25% {
+                transform: rotate(90deg) scale(1.1);
+                filter: hue-rotate(90deg) drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
+            }
+            50% {
+                transform: rotate(180deg) scale(1);
+                filter: hue-rotate(180deg) drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            }
+            75% {
+                transform: rotate(270deg) scale(1.1);
+                filter: hue-rotate(270deg) drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
+            }
+        }
+
+        .slide-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            letter-spacing: 1.5px;
+            animation: titleShimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes titleShimmer {
+            0%, 100% {
+                color: #fff;
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            }
+            25% {
+                color: #ff006e;
+                text-shadow: 0 0 25px rgba(255, 0, 110, 0.8);
+            }
+            50% {
+                color: #3a86ff;
+                text-shadow: 0 0 25px rgba(58, 134, 255, 0.8);
+            }
+            75% {
+                color: #06ffa5;
+                text-shadow: 0 0 25px rgba(6, 255, 165, 0.8);
+            }
+        }
+
+        .slide-description {
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.9;
+            color: #e0e0e0;
+        }
+
+        .geometric-pattern {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: geometricSpin 10s linear infinite;
+        }
+
+        .geometric-pattern:nth-child(1) {
+            top: 20px;
+            right: 20px;
+            animation-delay: 0s;
+        }
+
+        .geometric-pattern:nth-child(2) {
+            bottom: 20px;
+            left: 20px;
+            animation-delay: -3s;
+            border-radius: 0;
+            transform: rotate(45deg);
+        }
+
+        @keyframes geometricSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(0.8); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.05));
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(255, 255, 255, 0.2) 90deg,
+                transparent 180deg
+            );
+            animation: buttonKaleidoscope 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .control-btn:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes buttonKaleidoscope {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0.1));
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 28px;
+            font-weight: 300;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            letter-spacing: 3px;
+            animation: titleKaleidoscope 8s ease-in-out infinite;
+        }
+
+        @keyframes titleKaleidoscope {
+            0%, 100% {
+                filter: hue-rotate(0deg);
+                transform: scale(1);
+            }
+            25% {
+                filter: hue-rotate(90deg);
+                transform: scale(1.05);
+            }
+            50% {
+                filter: hue-rotate(180deg);
+                transform: scale(1);
+            }
+            75% {
+                filter: hue-rotate(270deg);
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="simple-bg"></div>
+    
+    <div class="title">
+        <h1>KALEIDOSCOPE SLIDER</h1>
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="simple-icon">💎</div>
+                <div class="slide-title">CRYSTAL VISION</div>
+                <div class="slide-description">Kristal görüntü sistemi</div>
+            </div>
+        </div>
+
+        <div class="slide left">
+            <div class="geometric-pattern"></div>
+            <div class="geometric-pattern"></div>
+            <div class="slide-content">
+                <div class="slide-icon">🌈</div>
+                <div class="slide-title">PRISM LIGHT</div>
+                <div class="slide-description">Işığın büküldüğü renkli spektrum dünyası</div>
+            </div>
+        </div>
+
+        <div class="slide right">
+            <div class="geometric-pattern"></div>
+            <div class="geometric-pattern"></div>
+            <div class="slide-content">
+                <div class="slide-icon">💎</div>
+                <div class="slide-title">DIAMOND CORE</div>
+                <div class="slide-description">Elmas sertliğinde güç ve parlaklık</div>
+            </div>
+        </div>
+
+        <div class="slide far-left">
+            <div class="geometric-pattern"></div>
+            <div class="geometric-pattern"></div>
+            <div class="slide-content">
+                <div class="slide-icon">🎭</div>
+                <div class="slide-title">MIRROR MAZE</div>
+                <div class="slide-description">Sonsuz yansımalar ve çoklu gerçeklikler</div>
+            </div>
+        </div>
+
+        <div class="slide far-right">
+            <div class="geometric-pattern"></div>
+            <div class="geometric-pattern"></div>
+            <div class="slide-content">
+                <div class="slide-icon">🌀</div>
+                <div class="slide-title">SPIRAL DREAM</div>
+                <div class="slide-description">Dönen rüyalar ve hipnotik desenler</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
+                
+                const position = (index - currentSlide + totalSlides) % totalSlides;
+                
+                if (position === 0) {
+                    slide.classList.add('active');
+                } else if (position === 1) {
+                    slide.classList.add('right');
+                } else if (position === 2) {
+                    slide.classList.add('far-right');
+                } else if (position === totalSlides - 1) {
+                    slide.classList.add('left');
+                } else if (position === totalSlides - 2) {
+                    slide.classList.add('far-left');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        // Mouse movement effect
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            const kaleidoscope = document.querySelector('.kaleidoscope-bg');
+            const overlay = document.querySelector('.kaleidoscope-overlay');
+            
+            kaleidoscope.style.transform = `rotate(${mouseX * 360}deg) scale(${1 + mouseY * 0.2})`;
+            overlay.style.transform = `rotate(${-mouseX * 180}deg)`;
+        });
+
+        // Initialize
+        updateSlides();
+        
+        // Auto-play
+        setInterval(nextSlide, 4500);
+    </script>
+</body>
+</html>

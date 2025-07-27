@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 11 - Matrix Digital Rain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #001a00 50%, #0a0a0a 100%);
+            overflow: hidden;
+            color: #00ff00;
+            height: 100vh;
+            position: relative;
+        }
+
+        .simple-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+        }
+
+        .matrix-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 14px;
+            line-height: 14px;
+            animation: matrixFall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes matrixFall {
+            0% {
+                top: -100%;
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide {
+            position: absolute;
+            width: 320px;
+            height: 400px;
+            background: linear-gradient(135deg, 
+                rgba(0, 255, 0, 0.1), 
+                rgba(0, 200, 0, 0.05));
+            border: 2px solid rgba(0, 255, 0, 0.6);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.6s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+            position: relative;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 255, 0, 0.2), 
+                transparent);
+            animation: matrixScan 3s infinite;
+        }
+
+        @keyframes matrixScan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .slide.active {
+            transform: scale(1.1) rotateX(5deg);
+            z-index: 20;
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.6);
+        }
+
+        .slide.left {
+            transform: translateX(-450px) scale(0.8) rotateY(30deg);
+            opacity: 0.6;
+        }
+
+        .slide.right {
+            transform: translateX(450px) scale(0.8) rotateY(-30deg);
+            opacity: 0.6;
+        }
+
+        .slide.far-left {
+            transform: translateX(-700px) scale(0.6) rotateY(45deg);
+            opacity: 0.3;
+        }
+
+        .slide.far-right {
+            transform: translateX(700px) scale(0.6) rotateY(-45deg);
+            opacity: 0.3;
+        }
+
+        .slide-content {
+            text-align: center;
+            padding: 40px;
+            z-index: 2;
+        }
+
+        .slide-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border: 2px solid rgba(0, 255, 0, 0.8);
+            border-radius: 50%;
+            background: rgba(0, 255, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .slide-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ff00;
+            text-shadow: 0 0 15px #00ff00;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .slide-description {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.9;
+            font-family: 'Courier New', monospace;
+        }
+
+        .matrix-code {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            font-size: 10px;
+            opacity: 0.5;
+            text-align: center;
+            animation: codeScroll 5s linear infinite;
+        }
+
+        @keyframes codeScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 20px #00ff00;
+            transform: scale(1.1);
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            animation: titleFlicker 3s infinite;
+        }
+
+        @keyframes titleFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .system-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            opacity: 0.6;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="system-info">
+        SYSTEM: ONLINE<br>
+        STATUS: ACTIVE<br>
+        MATRIX: v2.1.0
+    </div>
+
+    <div class="simple-grid"></div>
+    
+    <div class="title">
+        <h1>MATRIX SLIDER</h1>
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="simple-icon">01</div>
+                <div class="slide-title">CYBER CORE</div>
+                <div class="slide-description">Dijital işlem merkezi</div>
+            </div>
+        </div>
+
+        <div class="slide left">
+            <div class="slide-content">
+                <div class="simple-icon">10</div>
+                <div class="slide-title">DATA STREAM</div>
+                <div class="slide-description">Veri akış sistemi</div>
+            </div>
+        </div>
+
+        <div class="slide right">
+            <div class="slide-content">
+                <div class="simple-icon">11</div>
+                <div class="slide-title">NEURAL NET</div>
+                <div class="slide-description">Sinir ağı bağlantısı</div>
+            </div>
+        </div>
+
+        <div class="slide far-left">
+            <div class="slide-content">
+                <div class="slide-icon">🤖</div>
+                <div class="slide-title">AI CORE</div>
+                <div class="slide-description">Yapay zeka merkezi ve öğrenme algoritmaları</div>
+                <div class="matrix-code">11111111 00000000 10101010 01010101</div>
+            </div>
+        </div>
+
+        <div class="slide far-right">
+            <div class="slide-content">
+                <div class="slide-icon">🚀</div>
+                <div class="slide-title">HYPER DRIVE</div>
+                <div class="slide-description">Süper hızlı veri işleme ve transfer sistemleri</div>
+                <div class="matrix-code">01010101 10101010 11001100 00110011</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'left', 'right');
+                
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index === (currentSlide - 1 + totalSlides) % totalSlides) {
+                    slide.classList.add('left');
+                } else if (index === (currentSlide + 1) % totalSlides) {
+                    slide.classList.add('right');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        // Initialize
+        updateSlides();
+        
+        // Auto-play
+        setInterval(nextSlide, 4000);
+    </script>
+</body>
+</html>

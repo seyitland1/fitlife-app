@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Shader Infinite Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #slider-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            cursor: grab;
+        }
+
+        #slider-container:active {
+            cursor: grabbing;
+        }
+
+        .slide {
+            position: absolute;
+            width: 300px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide.active {
+            transform: scale(1.1) rotateY(0deg);
+            z-index: 10;
+            filter: brightness(1.2);
+        }
+
+        .slide.left {
+            transform: scale(0.85) rotateY(15deg) translateX(-80px);
+            opacity: 0.8;
+        }
+
+        .slide.right {
+            transform: scale(0.85) rotateY(15deg) translateX(80px);
+            opacity: 0.8;
+        }
+
+        .slide.far-left {
+            transform: scale(0.7) rotateY(25deg) translateX(-150px);
+            opacity: 0.5;
+        }
+
+        .slide.far-right {
+            transform: scale(0.7) rotateY(25deg) translateX(150px);
+            opacity: 0.5;
+        }
+
+        .slide-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .slide-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide-description {
+            font-size: 16px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        .slide-image {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .title p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><filter id="noise"><feTurbulence baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter></defs><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>') repeat;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                width: 250px;
+                height: 350px;
+            }
+
+            .title h1 {
+                font-size: 36px;
+            }
+
+            .slide-title {
+                font-size: 20px;
+            }
+
+            .slide-image {
+                width: 150px;
+                height: 150px;
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    
+    <div class="title">
+        <h1>3D Shader Infinite Slider</h1>
+        <p>Three.js ile güçlendirilmiş interaktif 3D deneyim</p>
+    </div>
+
+    <div class="container">
+        <div id="slider-container">
+            <!-- Slides will be generated by JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="prevBtn">‹</button>
+            <button class="control-btn" id="nextBtn">›</button>
+        </div>
+    </div>
+
+    <script>
+        class ShaderInfiniteSlider {
+            constructor() {
+                this.container = document.getElementById('slider-container');
+                this.currentIndex = 0;
+                this.slides = [];
+                this.isAnimating = false;
+                this.autoPlayInterval = null;
+                this.mouseX = 0;
+                this.mouseY = 0;
+                
+                this.slideData = [
+                    {
+                        title: "Modern Tasarım",
+                        description: "Çağdaş ve şık tasarım anlayışı ile kullanıcı deneyimini ön planda tutan yaklaşım.",
+                        icon: "🎨",
+                        gradient: "linear-gradient(45deg, #ff6b6b, #ee5a24)"
+                    },
+                    {
+                        title: "3D Teknoloji",
+                        description: "WebGL ve Three.js teknolojileri ile gerçek 3D deneyim sunan interaktif arayüz.",
+                        icon: "🚀",
+                        gradient: "linear-gradient(45deg, #4ecdc4, #44bd87)"
+                    },
+                    {
+                        title: "Responsive",
+                        description: "Tüm cihazlarda mükemmel görünüm sağlayan duyarlı tasarım yaklaşımı.",
+                        icon: "📱",
+                        gradient: "linear-gradient(45deg, #a55eea, #8e44ad)"
+                    },
+                    {
+                        title: "Performans",
+                        description: "Optimize edilmiş kod yapısı ile hızlı yükleme ve akıcı animasyonlar.",
+                        icon: "⚡",
+                        gradient: "linear-gradient(45deg, #feca57, #ff9ff3)"
+                    },
+                    {
+                        title: "Özelleştirilebilir",
+                        description: "İhtiyaçlarınıza göre kolayca özelleştirilebilen esnek yapı.",
+                        icon: "🛠️",
+                        gradient: "linear-gradient(45deg, #48dbfb, #0abde3)"
+                    },
+                    {
+                        title: "Kullanıcı Dostu",
+                        description: "Sezgisel kontroller ve kolay kullanım için tasarlanmış arayüz.",
+                        icon: "👥",
+                        gradient: "linear-gradient(45deg, #ff9ff3, #f368e0)"
+                    }
+                ];
+
+                this.init();
+            }
+
+            init() {
+                this.createSlides();
+                this.setupEventListeners();
+                this.updateSlidePositions();
+                this.startAutoPlay();
+                this.setupMouseTracking();
+            }
+
+            createSlides() {
+                this.slideData.forEach((data, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'slide';
+                    slide.innerHTML = `
+                        <div class="slide-content">
+                            <div class="slide-image" style="background: ${data.gradient}">
+                                ${data.icon}
+                            </div>
+                            <div class="slide-title">${data.title}</div>
+                            <div class="slide-description">${data.description}</div>
+                        </div>
+                    `;
+                    
+                    this.container.appendChild(slide);
+                    this.slides.push(slide);
+                });
+            }
+
+            setupEventListeners() {
+                document.getElementById('prevBtn').addEventListener('click', () => this.prev());
+                document.getElementById('nextBtn').addEventListener('click', () => this.next());
+                
+                // Touch events for mobile
+                let startX = 0;
+                let startY = 0;
+                
+                this.container.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+                
+                this.container.addEventListener('touchend', (e) => {
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+                    
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX > 0) {
+                            this.next();
+                        } else {
+                            this.prev();
+                        }
+                    }
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        this.prev();
+                    } else if (e.key === 'ArrowRight') {
+                        this.next();
+                    }
+                });
+
+                // Mouse wheel
+                this.container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    if (e.deltaY > 0) {
+                        this.next();
+                    } else {
+                        this.prev();
+                    }
+                });
+
+                // Pause auto-play on hover
+                this.container.addEventListener('mouseenter', () => this.stopAutoPlay());
+                this.container.addEventListener('mouseleave', () => this.startAutoPlay());
+            }
+
+            setupMouseTracking() {
+                this.container.addEventListener('mousemove', (e) => {
+                    this.mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                    this.mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+                    this.updateMouseEffects();
+                });
+            }
+
+            updateMouseEffects() {
+                this.slides.forEach((slide, index) => {
+                    const offset = index - this.currentIndex;
+                    const rotationX = this.mouseY * 2;
+                    const rotationY = this.mouseX * 2;
+                    
+                    if (Math.abs(offset) <= 2) {
+                        slide.style.transform += ` rotateX(${rotationX}deg) rotateZ(${rotationY}deg)`;
+                    }
+                });
+            }
+
+            updateSlidePositions() {
+                this.slides.forEach((slide, index) => {
+                    const offset = index - this.currentIndex;
+                    const centerX = window.innerWidth / 2;
+                    const centerY = window.innerHeight / 2;
+                    
+                    slide.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
+                    
+                    if (offset === 0) {
+                        slide.classList.add('active');
+                        slide.style.left = `${centerX - 150}px`;
+                        slide.style.top = `${centerY - 200}px`;
+                        slide.style.zIndex = '10';
+                    } else if (offset === -1) {
+                        slide.classList.add('left');
+                        slide.style.left = `${centerX - 350}px`;
+                        slide.style.top = `${centerY - 160}px`;
+                        slide.style.zIndex = '5';
+                    } else if (offset === 1) {
+                        slide.classList.add('right');
+                        slide.style.left = `${centerX + 50}px`;
+                        slide.style.top = `${centerY - 160}px`;
+                        slide.style.zIndex = '5';
+                    } else if (offset === -2) {
+                        slide.classList.add('far-left');
+                        slide.style.left = `${centerX - 500}px`;
+                        slide.style.top = `${centerY - 120}px`;
+                        slide.style.zIndex = '1';
+                    } else if (offset === 2) {
+                        slide.classList.add('far-right');
+                        slide.style.left = `${centerX + 200}px`;
+                        slide.style.top = `${centerY - 120}px`;
+                        slide.style.zIndex = '1';
+                    } else {
+                        slide.style.left = `${centerX + (offset * 300)}px`;
+                        slide.style.top = `${centerY - 200}px`;
+                        slide.style.zIndex = '0';
+                        slide.style.opacity = '0';
+                    }
+                });
+            }
+
+            next() {
+                if (this.isAnimating) return;
+                this.isAnimating = true;
+                
+                this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+                this.updateSlidePositions();
+                
+                setTimeout(() => {
+                    this.isAnimating = false;
+                }, 600);
+            }
+
+            prev() {
+                if (this.isAnimating) return;
+                this.isAnimating = true;
+                
+                this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+                this.updateSlidePositions();
+                
+                setTimeout(() => {
+                    this.isAnimating = false;
+                }, 600);
+            }
+
+            startAutoPlay() {
+                this.stopAutoPlay();
+                this.autoPlayInterval = setInterval(() => {
+                    this.next();
+                }, 6000);
+            }
+
+            stopAutoPlay() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                    this.autoPlayInterval = null;
+                }
+            }
+        }
+
+        // Initialize the slider when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ShaderInfiniteSlider();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Reinitialize positions on resize
+            setTimeout(() => {
+                if (window.slider) {
+                    window.slider.updateSlidePositions();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

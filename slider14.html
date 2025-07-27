@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider 14 - Origami Fold</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            color: #333;
+            height: 100vh;
+            perspective: 1000px;
+        }
+
+        .origami-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%),
+                linear-gradient(-45deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+            background-size: 100px 100px;
+            animation: origamiFold 15s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes origamiFold {
+            0%, 100% {
+                transform: rotateX(0deg) rotateY(0deg);
+                background-size: 100px 100px;
+            }
+            25% {
+                transform: rotateX(5deg) rotateY(5deg);
+                background-size: 120px 120px;
+            }
+            50% {
+                transform: rotateX(0deg) rotateY(10deg);
+                background-size: 80px 80px;
+            }
+            75% {
+                transform: rotateX(-5deg) rotateY(5deg);
+                background-size: 110px 110px;
+            }
+        }
+
+        .paper-texture {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px, 70px 70px;
+            z-index: 2;
+        }
+
+        .slider-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            perspective: 1500px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 350px;
+            height: 450px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9), 
+                rgba(255, 255, 255, 0.7));
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(0, 0, 0, 0.05) 50%, 
+                transparent 70%);
+            transform: translateX(-100%) skewX(-15deg);
+            transition: transform 0.6s ease;
+        }
+
+        .slide:hover::before {
+            transform: translateX(100%) skewX(-15deg);
+        }
+
+        .slide.active {
+            transform: scale(1.1) rotateX(0deg) rotateY(0deg) translateZ(50px);
+            z-index: 20;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .slide.left {
+            transform: translateX(-400px) scale(0.85) rotateY(25deg) rotateX(5deg);
+            opacity: 0.8;
+        }
+
+        .slide.right {
+            transform: translateX(400px) scale(0.85) rotateY(-25deg) rotateX(5deg);
+            opacity: 0.8;
+        }
+
+        .slide.far-left {
+            transform: translateX(-650px) scale(0.7) rotateY(40deg) rotateX(10deg);
+            opacity: 0.5;
+        }
+
+        .slide.far-right {
+            transform: translateX(650px) scale(0.7) rotateY(-40deg) rotateX(10deg);
+            opacity: 0.5;
+        }
+
+        .slide-content {
+            text-align: center;
+            padding: 40px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .origami-shape {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: origamiRotate 8s ease-in-out infinite;
+        }
+
+        .origami-face {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .origami-face:nth-child(1) {
+            transform: rotateY(0deg) translateZ(40px);
+        }
+
+        .origami-face:nth-child(2) {
+            transform: rotateY(90deg) translateZ(40px);
+            background: linear-gradient(135deg, #4834d4, #686de0);
+        }
+
+        .origami-face:nth-child(3) {
+            transform: rotateY(180deg) translateZ(40px);
+            background: linear-gradient(135deg, #00d2d3, #54a0ff);
+        }
+
+        .origami-face:nth-child(4) {
+            transform: rotateY(-90deg) translateZ(40px);
+            background: linear-gradient(135deg, #5f27cd, #a55eea);
+        }
+
+        .origami-face:nth-child(5) {
+            transform: rotateX(90deg) translateZ(40px);
+            background: linear-gradient(135deg, #00d84a, #05c46b);
+        }
+
+        .origami-face:nth-child(6) {
+            transform: rotateX(-90deg) translateZ(40px);
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+        }
+
+        @keyframes origamiRotate {
+            0%, 100% {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+            25% {
+                transform: rotateX(90deg) rotateY(90deg);
+            }
+            50% {
+                transform: rotateX(180deg) rotateY(180deg);
+            }
+            75% {
+                transform: rotateX(270deg) rotateY(270deg);
+            }
+        }
+
+        .slide-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .slide-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #34495e;
+            opacity: 0.9;
+        }
+
+        .fold-line {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                transparent 0%, 
+                rgba(0, 0, 0, 0.1) 50%, 
+                transparent 100%);
+            left: 50%;
+            transform: translateX(-50%);
+            animation: foldAnimation 6s ease-in-out infinite;
+        }
+
+        @keyframes foldAnimation {
+            0%, 100% {
+                transform: translateX(-50%) scaleY(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateX(-50%) scaleY(0.8);
+                opacity: 0.6;
+            }
+        }
+
+        .paper-corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.4));
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+            transition: all 0.3s ease;
+        }
+
+        .paper-corner.top-left {
+            top: 0;
+            left: 0;
+        }
+
+        .paper-corner.top-right {
+            top: 0;
+            right: 0;
+            transform: rotate(90deg);
+        }
+
+        .paper-corner.bottom-left {
+            bottom: 0;
+            left: 0;
+            transform: rotate(-90deg);
+        }
+
+        .paper-corner.bottom-right {
+            bottom: 0;
+            right: 0;
+            transform: rotate(180deg);
+        }
+
+        .slide:hover .paper-corner {
+            transform: scale(1.2) rotate(45deg);
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.9), 
+                rgba(255, 255, 255, 0.7));
+            color: #2c3e50;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+
+        .control-btn:hover::before {
+            left: 100%;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 1), 
+                rgba(255, 255, 255, 0.8));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px) rotateX(5deg);
+        }
+
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+        }
+
+        .title h1 {
+            font-size: 32px;
+            font-weight: 300;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 3px;
+            animation: titleFold 6s ease-in-out infinite;
+        }
+
+        @keyframes titleFold {
+            0%, 100% {
+                transform: perspective(500px) rotateX(0deg);
+            }
+            50% {
+                transform: perspective(500px) rotateX(10deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="simple-bg"></div>
+    
+    <div class="title">
+        <h1>ORIGAMI SLIDER</h1>
+    </div>
+
+    <div class="slider-container">
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="simple-icon">🕊️</div>
+                <div class="slide-title">PAPER CRANE</div>
+                <div class="slide-description">Kağıt sanatı tasarımı</div>
+            </div>
+        </div>
+
+        <div class="slide left">
+            <div class="fold-line"></div>
+            <div class="paper-corner top-left"></div>
+            <div class="paper-corner top-right"></div>
+            <div class="paper-corner bottom-left"></div>
+            <div class="paper-corner bottom-right"></div>
+            <div class="slide-content">
+                <div class="origami-shape">
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                </div>
+                <div class="slide-title">LOTUS BLOOM</div>
+                <div class="slide-description">Çiçek açan lotus gibi gelişen yaratıcı çözümler</div>
+            </div>
+        </div>
+
+        <div class="slide right">
+            <div class="fold-line"></div>
+            <div class="paper-corner top-left"></div>
+            <div class="paper-corner top-right"></div>
+            <div class="paper-corner bottom-left"></div>
+            <div class="paper-corner bottom-right"></div>
+            <div class="slide-content">
+                <div class="origami-shape">
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                </div>
+                <div class="slide-title">DRAGON WING</div>
+                <div class="slide-description">Güçlü ve esnek yapılar ile sınırsız potansiyel</div>
+            </div>
+        </div>
+
+        <div class="slide far-left">
+            <div class="fold-line"></div>
+            <div class="paper-corner top-left"></div>
+            <div class="paper-corner top-right"></div>
+            <div class="paper-corner bottom-left"></div>
+            <div class="paper-corner bottom-right"></div>
+            <div class="slide-content">
+                <div class="origami-shape">
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                </div>
+                <div class="slide-title">STAR FOLD</div>
+                <div class="slide-description">Yıldızlar gibi parlayan inovatif fikirler</div>
+            </div>
+        </div>
+
+        <div class="slide far-right">
+            <div class="fold-line"></div>
+            <div class="paper-corner top-left"></div>
+            <div class="paper-corner top-right"></div>
+            <div class="paper-corner bottom-left"></div>
+            <div class="paper-corner bottom-right"></div>
+            <div class="slide-content">
+                <div class="origami-shape">
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                    <div class="origami-face"></div>
+                </div>
+                <div class="slide-title">INFINITY BOX</div>
+                <div class="slide-description">Sonsuz olasılıklar sunan katlanabilir çözümler</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="prevSlide()">‹</button>
+        <button class="control-btn" onclick="nextSlide()">›</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'left', 'right', 'far-left', 'far-right');
+                
+                const position = (index - currentSlide + totalSlides) % totalSlides;
+                
+                if (position === 0) {
+                    slide.classList.add('active');
+                } else if (position === 1) {
+                    slide.classList.add('right');
+                } else if (position === 2) {
+                    slide.classList.add('far-right');
+                } else if (position === totalSlides - 1) {
+                    slide.classList.add('left');
+                } else if (position === totalSlides - 2) {
+                    slide.classList.add('far-left');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        // Paper folding effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            const origamiBg = document.querySelector('.origami-bg');
+            origamiBg.style.transform = `rotateX(${mouseY * 10 - 5}deg) rotateY(${mouseX * 10 - 5}deg)`;
+        });
+
+        // Initialize
+        updateSlides();
+        
+        // Auto-play
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html>
