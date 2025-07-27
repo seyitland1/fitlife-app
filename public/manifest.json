@@ -1,0 +1,54 @@
+{
+  "short_name": "FitMe",
+  "name": "FitMe - Sağlık ve Fitness Uygulaması",
+  "description": "AI destekli kişiselleştirilmiş antrenman planları, sağlıklı tarifler ve fitness mücadeleleri ile kapsamlı sağlık ve fitness deneyimi.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#667eea",
+  "background_color": "#667eea",
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "tr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Antrenmanlar",
+      "short_name": "Antrenman",
+      "description": "Antrenman planlarına hızlı erişim",
+      "url": "/workouts",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Koç",
+      "short_name": "AI Koç",
+      "description": "Kişiselleştirilmiş AI koçunuz",
+      "url": "/ai-coach",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tarifler",
+      "short_name": "Tarifler",
+      "description": "Sağlıklı yemek tarifleri",
+      "url": "/recipes",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ]
+}
